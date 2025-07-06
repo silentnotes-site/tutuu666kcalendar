@@ -1,31 +1,19 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const fs = require('fs');
-const path = require('path');
 const app = express();
 const PORT = 3000;
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-const dataDir = path.join(__dirname, 'data');
-if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir);
-const calendarsDir = path.join(__dirname, 'calendars');
-if (!fs.existsSync(calendarsDir)) fs.mkdirSync(calendarsDir);
+let users = [];
+let events = [];
+let calendars = [];
 
-const usersFile = path.join(dataDir, 'users.json');
-const eventsFile = path.join(dataDir, 'events.json');
-const calendarsFile = path.join(dataDir, 'calendars.json');
-
-let users = fs.existsSync(usersFile) ? JSON.parse(fs.readFileSync(usersFile, 'utf8')) : [];
-let events = fs.existsSync(eventsFile) ? JSON.parse(fs.readFileSync(eventsFile, 'utf8')) : [];
-let calendars = fs.existsSync(calendarsFile) ? JSON.parse(fs.readFileSync(calendarsFile, 'utf8')) : [];
-
-function saveUsers() { fs.writeFile(usersFile, JSON.stringify(users, null, 2), err => {}); }
-function saveEvents() { fs.writeFile(eventsFile, JSON.stringify(events, null, 2), err => {}); }
-function saveCalendars() { fs.writeFile(calendarsFile, JSON.stringify(calendars, null, 2), err => {}); }
+function saveUsers() {}
+function saveEvents() {}
+function saveCalendars() {}
 
 app.post('/register', (req, res) => {
   const { username, password, email, displayName } = req.body;
@@ -33,7 +21,6 @@ app.post('/register', (req, res) => {
     return res.status(400).json({ message: 'Utente già esistente' });
   const newUser = { username, password, email, displayName, userCode: Date.now().toString() };
   users.push(newUser);
-  saveUsers();
   res.cookie('userCode', newUser.userCode, { httpOnly: true, secure: false });
   res.status(201).json({
     message: 'Registrazione avvenuta con successo',
@@ -58,7 +45,6 @@ app.post('/login', (req, res) => {
     } else {
       user.banned = false;
       user.banInfo = null;
-      saveUsers();
     }
   }
   res.cookie('userCode', user.userCode, { httpOnly: true, secure: false });
@@ -93,7 +79,6 @@ app.post('/update-profile', (req, res) => {
   if (newDisplayName) user.displayName = newDisplayName;
   if (description !== undefined) user.biografia = description;
   if (profilePhoto !== undefined) user.fotoProfilo = profilePhoto;
-  saveUsers();
   res.status(200).json({
     message: 'Profilo aggiornato',
     user: { username: user.username, email: user.email, displayName: user.displayName }
@@ -113,11 +98,9 @@ app.post('/create-calendar', (req, res) => {
     id: Date.now().toString(),
     userCode: currentUserCode,
     calendarName,
-    image: image ||
-      'https://cdn.glitch.global/22d29c5f-8fa8-4652-916e-09a08a82c8a6/Screenshot%202025-03-16%20231719.png?v=1742163455582'
+    image: image || 'https://cdn.glitch.global/22d29c5f-8fa8-4652-916e-09a08a82c8a6/Screenshot%202025-03-16%20231719.png?v=1742163455582'
   };
   calendars.push(newCalendar);
-  saveCalendars();
   const calendarLink = `${req.protocol}://${req.get('host')}/calendars/${newCalendar.id}`;
   res.status(201).json({
     message: 'Calendario creato',
@@ -165,7 +148,6 @@ app.post('/add-event', (req, res) => {
     ? { id: req.body.id, userCode, title, start, description, calendarId }
     : { id: Date.now().toString(), userCode, title, start, description, calendarId };
   events.push(newEvent);
-  saveEvents();
   res.status(201).json({ message: 'Evento aggiunto', event: newEvent });
 });
 
@@ -181,7 +163,6 @@ app.delete('/delete-event', (req, res) => {
   if (eventIndex === -1)
     return res.status(404).json({ message: 'Evento non trovato' });
   events.splice(eventIndex, 1);
-  saveEvents();
   res.status(200).json({ message: 'Evento rimosso' });
 });
 
@@ -192,7 +173,6 @@ app.get('/calendars/:calendarId', (req, res) => {
   const calendarEvents = events
     .filter(e => e.calendarId === calendarId)
     .map(({ userCode, ...rest }) => rest);
-  const calendarHtmlPath = path.join(calendarsDir, `${calendarId}.html`);
   const htmlContent = `
   <!DOCTYPE html>
   <html lang="it">
@@ -222,7 +202,6 @@ app.get('/calendars/:calendarId', (req, res) => {
   </body>
   </html>
   `;
-  fs.writeFileSync(calendarHtmlPath, htmlContent);
   res.status(200).send(htmlContent);
 });
 
@@ -235,7 +214,6 @@ app.post('/ban-user', (req, res) => {
   if (!targetUser) return res.status(404).json({ message: 'Utente non trovato' });
   targetUser.banned = true;
   targetUser.banInfo = { reason: reason || 'Motivo non specificato', date: new Date().toISOString() };
-  saveUsers();
   res.status(200).json({ message: `Utente ${targetUser.username} bannato con successo` });
 });
 
@@ -248,7 +226,6 @@ app.post('/unban-user', (req, res) => {
   if (!targetUser) return res.status(404).json({ message: 'Utente non trovato' });
   targetUser.banned = false;
   targetUser.banInfo = null;
-  saveUsers();
   res.status(200).json({ message: `Ban rimosso per l'utente ${targetUser.username}` });
 });
 
