@@ -1,0 +1,29 @@
+
+  <!DOCTYPE html>
+  <html lang="it">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wewe</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.0/index.css" rel="stylesheet" />
+    <style>
+      body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+      #calendar { max-width: 900px; margin: 40px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    </style>
+  </head>
+  <body>
+    <div id="calendar"></div>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.0/index.global.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          events: [{"id":"1746013188592","title":"Nota: saber fa casino","start":"2025-04-29T22:00:00.000Z","description":"Nota: saber fa casino","calendarId":"1746013134268"},{"id":"1747127228495","title":"Saber","start":"2025-05-07T22:00:00.000Z","description":"Saber","calendarId":"1746013134268"},{"id":"1747127263640","title":"Fine scuola ","start":"2025-06-05T22:00:00.000Z","description":"Fine scuola ","calendarId":"1746013134268"},{"id":"1747127305528","title":"Fine scuola (^_^)","start":"2025-05-12T22:00:00.000Z","description":"Fine scuola (^_^)","calendarId":"1746013134268"}]
+        });
+        calendar.render();
+      });
+    </script>
+  </body>
+  </html>
+  

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profilo Utente</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 50px;
+    }
+    #user-profile {
+      display: none;
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: left;
+    }
+    #profile-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      display: block;
+      margin: 0 auto 20px auto;
+    }
+    .section {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    .section:last-child {
+      border-bottom: none;
+    }
+    .section-title {
+      font-weight: bold;
+      color: #333;
+    }
+    .error-message {
+      color: red;
+      font-size: 16px;
+      display: none;
+    }
+    /* Stili per le card dei calendari aggiornati */
+    #calendar-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+    .calendar-card {
+      width: 150px;
+      background-color: #fff;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      overflow: hidden;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .calendar-card:hover {
+      transform: translateY(-5px);
+      border-color: #888;
+    }
+    .calendar-card img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+    }
+    .calendar-card p {
+      margin: 10px 0;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="user-profile">
+    <h2 style="text-align: center;">Profilo Utente</h2>
+    
+    <div class="section">
+      <img id="profile-photo" src="https://via.placeholder.com/150" alt="Foto Profilo">
+    </div>
+
+    <div class="section">
+      <p class="section-title">Nome:</p>
+      <p id="profile-name"></p>
+    </div>
+
+    <div class="section">
+      <p class="section-title">Username:</p>
+      <p id="profile-username"></p>
+    </div>
+
+    <div class="section">
+      <p class="section-title">Biografia:</p>
+      <p id="profile-description"></p>
+    </div>
+
+    <div class="section">
+      <p class="section-title">Calendari Creati:</p>
+      <div id="calendar-links"></div>
+    </div>
+  </div>
+
+  <div id="error-message" class="error-message">Utente non trovato o errore nel caricamento del profilo.</div>
+
+  <script>
+    function getProfileData(username) {
+      fetch(`/get-user-profile?username=${username}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('User not found');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const user = data.user;
+          document.getElementById('profile-name').textContent = user.displayName || '';
+          document.getElementById('profile-username').textContent = user.username ? '@' + user.username : '';
+          document.getElementById('profile-description').textContent = user.biografia || '';
+          document.getElementById('profile-photo').src = user.fotoProfilo || 'https://via.placeholder.com/150';
+
+          document.getElementById('user-profile').style.display = 'block';
+          getCalendars(username);
+        })
+        .catch(error => {
+          console.error(error);
+          document.getElementById('error-message').style.display = 'block';
+        });
+    }
+
+    function getCalendars(username) {
+      fetch(`/get-calendars?profileUsername=${username}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Errore nella risposta del server');
+          }
+          return response.json();
+        })
+        .then(data => {
+          const calendarLinksDiv = document.getElementById('calendar-links');
+          calendarLinksDiv.innerHTML = '';
+
+          if (data && data.calendars && Array.isArray(data.calendars) && data.calendars.length > 0) {
+            data.calendars.forEach(calendar => {
+              if (calendar && calendar.id && calendar.calendarName) {
+                const calendarCard = document.createElement('div');
+                calendarCard.className = 'calendar-card';
+                calendarCard.onclick = () => {
+                  window.location.href = `/calendars/${calendar.id}`;
+                };
+
+                const img = document.createElement('img');
+                img.src = calendar.image || 'https://via.placeholder.com/150?text=Calendar';
+                img.alt = calendar.calendarName;
+
+                const nameP = document.createElement('p');
+                nameP.textContent = calendar.calendarName;
+
+                calendarCard.appendChild(img);
+                calendarCard.appendChild(nameP);
+                calendarLinksDiv.appendChild(calendarCard);
+              }
+            });
+          } else {
+            calendarLinksDiv.innerHTML = '<p>Nessun calendario trovato.</p>';
+          }
+        })
+        .catch(error => {
+          console.error('Errore nel caricamento dei calendari:', error);
+          document.getElementById('calendar-links').innerHTML = '<p>Errore nel caricamento dei calendari.</p>';
+        });
+    }
+
+    function getUsernameFromUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('username');
+    }
+
+    window.onload = function() {
+      const username = getUsernameFromUrl();
+      if (username) {
+        getProfileData(username);
+      } else {
+        alert('Nessun username specificato');
+      }
+    }
+  </script>
+</body>
+</html>

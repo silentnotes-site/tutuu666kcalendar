@@ -1,0 +1,29 @@
+
+  <!DOCTYPE html>
+  <html lang="it">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saber Calendar</title>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.0/index.css" rel="stylesheet" />
+    <style>
+      body { font-family: 'Helvetica Neue', Arial, sans-serif; margin: 0; padding: 0; background: #f7f7f7; }
+      #calendar { max-width: 900px; margin: 40px auto; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    </style>
+  </head>
+  <body>
+    <div id="calendar"></div>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.0/index.global.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: 'dayGridMonth',
+          events: [{"id":"1742546733718","title":"Inizio Primavera","start":"2025-03-20T23:00:00.000Z","description":"Inizio Primavera","calendarId":"1742546698160"},{"id":"1742546886608","title":"Fine Ramadan ","start":"2025-03-30T22:00:00.000Z","description":"Fine Ramadan ","calendarId":"1742546698160"},{"id":"1742546898658","title":"Inizio Ramadan ","start":"2025-02-28T23:00:00.000Z","description":"Inizio Ramadan ","calendarId":"1742546698160"},{"id":"1742806764152","title":"Ultimo giorno del corso di intelligenza artificiale","start":"2025-03-25T23:00:00.000Z","description":"Ultimo giorno del corso di intelligenza artificiale","calendarId":"1742546698160"},{"id":"1742806779207","title":"Ultima settimana di ramadan","start":"2025-03-23T23:00:00.000Z","description":"Ultima settimana di ramadan","calendarId":"1742546698160"},{"id":"1742806820610","title":"Inizio vacanze di pasqua","start":"2025-04-16T22:00:00.000Z","description":"Inizio vacanze di pasqua","calendarId":"1742546698160"},{"id":"1742806880007","title":"Di nuovo vacanze","start":"2025-04-30T22:00:00.000Z","description":"Di nuovo vacanze","calendarId":"1742546698160"},{"id":"1742806946367","title":"ritorno a scuola","start":"2025-05-04T22:00:00.000Z","description":"ritorno a scuola","calendarId":"1742546698160"},{"id":"1742806963554","title":"ultimo giorno di scuola","start":"2025-06-05T22:00:00.000Z","description":"ultimo giorno di scuola","calendarId":"1742546698160"},{"id":"1742807342790","title":"fine vacanze di pasqua","start":"2025-04-27T22:00:00.000Z","description":"fine vacanze di pasqua","calendarId":"1742546698160"},{"id":"1742807478488","title":"morto lo zio di alessandra :(","start":"2025-03-22T23:00:00.000Z","description":"morto lo zio di alessandra :(","calendarId":"1742546698160"},{"id":"1742807534393","title":"Santa Alessandra","start":"2025-03-19T23:00:00.000Z","description":"Santa Alessandra","calendarId":"1742546698160"},{"id":"1744107064665","title":"saber toglie il gesso","start":"2025-05-06T22:00:00.000Z","description":"saber toglie il gesso","calendarId":"1742546698160"},{"id":"1744107080113","title":"saber ha messo il gesso","start":"2025-04-06T22:00:00.000Z","description":"saber ha messo il gesso","calendarId":"1742546698160"},{"id":"1744711477340","title":"ho perso la cavalletta","start":"2025-04-15T09:00:00.000Z","description":"ho perso la cavalletta","calendarId":"1742546698160"},{"id":"1747387133511","title":"Scrittura libro giallo","start":"2025-05-15T22:00:00.000Z","description":"Scrittura libro giallo","calendarId":"1742546698160"},{"id":"1747387145277","title":"Saber prende il fritto","start":"2025-05-15T22:00:00.000Z","description":"Saber prende il fritto","calendarId":"1742546698160"}]
+        });
+        calendar.render();
+      });
+    </script>
+  </body>
+  </html>
+  

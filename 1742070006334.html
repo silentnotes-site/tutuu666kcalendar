@@ -1,0 +1,69 @@
+
+    <!DOCTYPE html>
+    <html lang="it">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>f</title>
+      <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .calendar-container { max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 2px 2px 10px rgba(0,0,0,0.1); }
+        .event { background: #4CAF50; color: white; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #ddd; text-align: center; }
+        .event-day { background-color: yellow; }
+      </style>
+    </head>
+    <body>
+      <h2>f</h2>
+      <div class="calendar-container">
+        <h3 id="month-year"></h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Dom</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Gio</th><th>Ven</th><th>Sab</th>
+            </tr>
+          </thead>
+          <tbody id="calendar-body"></tbody>
+        </table>
+        <h3>Eventi</h3>
+        <ul id="event-list">
+          
+        </ul>
+      </div>
+
+      <script>
+        const events = [];
+        function generateCalendar(year, month) {
+          const calendarBody = document.getElementById('calendar-body');
+          const monthYear = document.getElementById('month-year');
+          const date = new Date(year, month, 1);
+          const firstDay = date.getDay();
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+          monthYear.textContent = date.toLocaleString('it-IT', { month: 'long', year: 'numeric' });
+          calendarBody.innerHTML = '';
+          let row = document.createElement('tr');
+          for (let i = 0; i < firstDay; i++) {
+            row.appendChild(document.createElement('td'));
+          }
+          for (let day = 1; day <= daysInMonth; day++) {
+            const cell = document.createElement('td');
+            cell.textContent = day;
+            const event = events.find(e => new Date(e.start).getDate() === day && new Date(e.start).getMonth() === month);
+            if (event) {
+              cell.classList.add('event-day');
+              cell.title = event.title;
+            }
+            row.appendChild(cell);
+            if ((firstDay + day) % 7 === 0 || day === daysInMonth) {
+              calendarBody.appendChild(row);
+              row = document.createElement('tr');
+            }
+          }
+        }
+        generateCalendar(new Date().getFullYear(), new Date().getMonth());
+      </script>
+    </body>
+    </html>
+  
